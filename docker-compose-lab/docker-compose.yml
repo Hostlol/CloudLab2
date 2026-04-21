@@ -4,6 +4,18 @@ services:
     build: ./api
     ports:
       - "8080:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  watcher:
+    build: ./watcher
+    depends_on:
+      api:
+        condition: service_healthy
 
   web:
     build: ./web
@@ -15,6 +27,6 @@ services:
   db:
     image: postgres:15-alpine
     environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: appdb
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
 
