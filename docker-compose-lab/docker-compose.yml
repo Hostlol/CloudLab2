@@ -4,12 +4,19 @@ services:
     build: ./api
     ports:
       - "8080:8080"
+    depends_on:
+      - db
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
       interval: 15s
       timeout: 5s
       retries: 5
       start_period: 30s
+    environment:
+      DB_HOST: db
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   watcher:
     build: ./watcher
